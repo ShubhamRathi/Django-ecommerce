@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="page-header">
+  <h1>{{product.title}} <a href="{% url 'update_cart' product.slug %}" class="pull-right"> Add to Cart </a>  <small>${{product.price}}</small></h1>
+</div>
+
+<div class="row">
+<div class="col-sm-4">
+{% for img in images %}
+
+	{% if img.featured %}
+		<h2> Featured </h2>
+		<img src="{{ MEDIA_URL }}{{img.image}}" class="img-responsive" style="height:350px; width: 500px;">
+	{% endif %}
+	{% if not img.featured %}
+		<img src="http://placehold.it/350x150" class="img-responsive">
+	{% endif %}
+	
+
+{% endfor %}
+</div>
+<div class="col-sm-8">
+	{{product.description| linebreaks}}
+	</div>
+</div>
+{% endblock %}
