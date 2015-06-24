@@ -4,7 +4,7 @@ from django.contrib import admin
 from .models import Cart, CartItem
 
 class CartAdmin(admin.ModelAdmin):
-	filter_horizontal= ('products',)
+	#filter_horizontal= ('products',)
 	class Meta:
 		model = Cart
 
