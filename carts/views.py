@@ -21,7 +21,7 @@ def view(request):
 
 	return render(request, template, context)
 
-def update_cart(request, slug):	
+def update_cart(request, slug, qty):	
 	request.session.set_expiry(12000)
 	try:
 		the_id = request.session['cart_id']
@@ -37,24 +37,30 @@ def update_cart(request, slug):
 		pass
 	except:
 		pass
-	cart_item, created=CartItem.objects.get_or_create(product=product)
-	if created:
-		print "CREATED"
-	else:
-		print "NOT CREATED"
 	cart = Cart.objects.get(id=the_id)
-	if not cart_item in cart.items.all():
-		cart.items.add(cart_item)
+	cart_item, created=CartItem.objects.get_or_create(cart=cart, product=product)
+	print cart_item, created
+	# if created:
+	# 	print "CREATED"
+	# else:
+	# 	print "NOT CREATED"
+	if qty==0:
+		cart_item.delete()
 	else:
-		cart.items.remove(cart_item)
+		cart_item.quantity=qty
+		cart_item.save()
+	# if not cart_item in cart.items.all():
+	# 	cart.items.add(cart_item)
+	# else:
+	# 	cart.items.remove(cart_item)
 	new_total=0.00
-	for item in cart.items.all():
+	for item in cart.cartitem_set.all():
 		line_total= float(item.product.price) * item.quantity
 		new_total += line_total
 
 	cart.total= new_total
 	cart.save()
-	request.session['items_total'] = cart.items.count()
+	request.session['items_total'] = cart.cartitem_set.count()
 	return HttpResponseRedirect(reverse("cart"))
 
 

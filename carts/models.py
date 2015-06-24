@@ -11,7 +11,10 @@ class CartItem(models.Model):
 	updated = models.DateTimeField(auto_now_add=False, auto_now=True, null=True)
 
 	def __unicode__(self):
-		return str(self.product.title)
+		try:
+			return str(self.cart.id)
+		except:
+			return (self.product.title)
 
 class Cart(models.Model):
 	#items = models.ManyToManyField(CartItem, null=True, blank=True)
