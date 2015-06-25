@@ -5,13 +5,18 @@
 	<h1 style="text-align: center;"> {{empty_message}}</h1>
 {% else %}
 <table class="table">
-<thead><th>Name</th><th>Price</th><th>Quantity</th></thead>
+<thead><th>Name</th><th>Price</th><th>Quantity</th><th>Notes</th></thead>
 <tfoot>
 	<tr> <td></td><td>Total: {{cart.total}}</td> </tr>
 </tfoot>
 	{% for item in cart.cartitem_set.all %}
 
-	<tr><td>{{item.product}}</td> <td>{{item.product.price}}</td><td>{{item.quantity}}</td> <td><a href="{% url 'update_cart' item.product.slug %}">Remove </a></td></tr>
+	<tr>
+	<td>{{item.product}}</td> 
+	<td>{{item.product.price}}</td>
+	<td>{{item.quantity}}</td>
+	<td>{{item.notes}}</td> 
+	<td><a href="{% url 'update_cart' item.product.slug  %}?qty=0">Remove </a></td></tr>
 	{% endfor %}
 
 </table>

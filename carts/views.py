@@ -21,40 +21,71 @@ def view(request):
 
 	return render(request, template, context)
 
-def update_cart(request, slug, qty):	
+def update_cart(request, slug):	
 	request.session.set_expiry(12000)
 	try:
-		the_id = request.session['cart_id']
+		qty= request.GET.get('qty')
+		update_qty= True
 	except:
-		new_cart=Cart()
-		new_cart.save()
-		request.session['cart_id']=new_cart.id
-		the_id=new_cart.id
+		qty=None
+		update_qty= False
+
+	notes ={}
+	try:
+		color= request.GET.get('color')
+		notes['color']=color
+	except:
+		color=None
 
 	try:
+		size= request.GET.get('size')
+		notes['size']=size
+	except:
+		size=None
+	try:
+		the_id = request.session['cart_id']
+		#print "28. the_id: ", the_id
+	except:
+		new_cart=Cart()
+		#print new_cart
+		#print "^new_cart____________"
+		new_cart.save()
+		request.session['cart_id']=new_cart.id
+		#print "35. request.session['cart_id']: "
+		#print request.session['cart_id']
+		the_id=new_cart.id
+		#print "37. new_cart.id: "
+		#print new_cart.id
+	#print request.GET
+	try:
+		#print "39. slug: ", slug
 		product = Product.objects.get(slug=slug)
+		#print "41. product: ", product
 	except Product.DoesNotExist:
 		pass
 	except:
 		pass
-	cart = Cart.objects.get(id=the_id)
+	cart = Cart.objects.get(id=the_id)	
 	cart_item, created=CartItem.objects.get_or_create(cart=cart, product=product)
-	print cart_item, created
-	# if created:
-	# 	print "CREATED"
-	# else:
-	# 	print "NOT CREATED"
-	if qty==0:
-		cart_item.delete()
+	
+	if update_qty and qty:
+		if int(qty)<=0:
+			cart_item.delete()
+		else:
+			cart_item.quantity=qty
+			cart_item.notes=notes
+			cart_item.save()
 	else:
-		cart_item.quantity=qty
-		cart_item.save()
+		pass
 	# if not cart_item in cart.items.all():
 	# 	cart.items.add(cart_item)
 	# else:
 	# 	cart.items.remove(cart_item)
 	new_total=0.00
+	#print "67. cart.cartitem_set.all(): ", cart.cartitem_set.all()
+	#print "68. cart: ", cart
 	for item in cart.cartitem_set.all():
+		#print "70. item: ", item
 		line_total= float(item.product.price) * item.quantity
 		new_total += line_total
 
