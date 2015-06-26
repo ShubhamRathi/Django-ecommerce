@@ -2,96 +2,85 @@ from django.shortcuts import render, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 
 # Create your views here.
-from .models import Cart, CartItem
+from .models import Cart, CartItem, Variation
 from products.models import Product
 
 def view(request):
 	try:
 		the_id = request.session['cart_id']
+		cart = Cart.objects.get(id=the_id)
 	except:
-		the_id=None
+		the_id = None
+				
 	if the_id:
-		cart=Cart.objects.get(id=the_id)
-		context={"cart":cart}
+		new_total = 0.00
+		for item in cart.cartitem_set.all():
+			line_total = float(item.product.price) * item.quantity
+			new_total += line_total
+		request.session['items_total'] = cart.cartitem_set.count()
+		cart.total = new_total
+		cart.save()
+		context = {"cart": cart}
 	else:
-		empty_message ="Cart is empty. Please continue shopping"
-		context={"empty":True, "empty_message": empty_message}
-
+		empty_message = "Your Cart is Empty, please keep shopping."
+		context = {"empty": True, "empty_message": empty_message}
+	
 	template = "cart/view.html"
-
 	return render(request, template, context)
 
-def update_cart(request, slug):	
-	request.session.set_expiry(12000)
-	try:
-		qty= request.GET.get('qty')
-		update_qty= True
-	except:
-		qty=None
-		update_qty= False
-
-	notes ={}
-	try:
-		color= request.GET.get('color')
-		notes['color']=color
-	except:
-		color=None
-
-	try:
-		size= request.GET.get('size')
-		notes['size']=size
-	except:
-		size=None
+def remove_from_cart(request, id):
 	try:
 		the_id = request.session['cart_id']
-		#print "28. the_id: ", the_id
+		cart = Cart.objects.get(id=the_id)
 	except:
-		new_cart=Cart()
-		#print new_cart
-		#print "^new_cart____________"
-		new_cart.save()
-		request.session['cart_id']=new_cart.id
-		#print "35. request.session['cart_id']: "
-		#print request.session['cart_id']
-		the_id=new_cart.id
-		#print "37. new_cart.id: "
-		#print new_cart.id
-	#print request.GET
+		return HttpResponseRedirect(reverse("cart"))
+
+	cartitem = CartItem.objects.get(id=id)
+	#cartitem.delete()
+	cartitem.cart = None
+	cartitem.save()
+	#send "success message"
+	return HttpResponseRedirect(reverse("cart"))
+
+def add_to_cart(request, slug):
+	request.session.set_expiry(120000)
+
 	try:
-		#print "39. slug: ", slug
+		the_id = request.session['cart_id']
+	except:
+		new_cart = Cart()
+		new_cart.save()
+		request.session['cart_id'] = new_cart.id
+		the_id = new_cart.id
+	
+	cart = Cart.objects.get(id=the_id)
+
+	try:
 		product = Product.objects.get(slug=slug)
-		#print "41. product: ", product
 	except Product.DoesNotExist:
 		pass
 	except:
 		pass
-	cart = Cart.objects.get(id=the_id)	
-	cart_item, created=CartItem.objects.get_or_create(cart=cart, product=product)
-	
-	if update_qty and qty:
-		if int(qty)<=0:
-			cart_item.delete()
-		else:
-			cart_item.quantity=qty
-			cart_item.notes=notes
-			cart_item.save()
-	else:
-		pass
-	# if not cart_item in cart.items.all():
-	# 	cart.items.add(cart_item)
-	# else:
-	# 	cart.items.remove(cart_item)
-	new_total=0.00
-	#print "67. cart.cartitem_set.all(): ", cart.cartitem_set.all()
-	#print "68. cart: ", cart
-	for item in cart.cartitem_set.all():
-		#print "70. item: ", item
-		line_total= float(item.product.price) * item.quantity
-		new_total += line_total
 
-	cart.total= new_total
-	cart.save()
-	request.session['items_total'] = cart.cartitem_set.count()
+	product_var = [] #product variation
+	if request.method == "POST":
+		qty = request.POST['qty']
+		for item in request.POST:
+			key = item
+			val = request.POST[key]
+			try:
+				v = Variation.objects.get(product=product, category__iexact=key, title__iexact=val)
+				product_var.append(v)
+			except:
+				pass
+		cart_item = CartItem.objects.create(cart=cart, product=product)
+		if len(product_var) > 0:
+			cart_item.variations.add(*product_var)
+		cart_item.quantity = qty
+		cart_item.save()
+		# success message
+		return HttpResponseRedirect(reverse("cart"))
+	#error message
 	return HttpResponseRedirect(reverse("cart"))
 
 

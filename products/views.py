@@ -20,13 +20,13 @@ def all(request):
 def single(request, slug):
 	try:
 		product = Product.objects.get(slug=slug)
-		#images = product.productimage_set.all()
 		images = ProductImage.objects.filter(product=product)
 		context = {'product': product, "images": images}
 		template = 'products/single.html'	
 		return render(request, template, context)
 	except:
-		raise Http404
+		return Http404
+	
 
 def search(request):
 	try:

@@ -3,20 +3,27 @@
 {% block content %}
 
 <div class="page-header">
-  <h1>{{product.title}} <!-- <a href="{% url 'update_cart' product.slug %}?qty=2" class="pull-right"> Add to Cart </a> -->  <small>${{product.price}}</small></h1>
-  <form method="GET" action="{% url 'update_cart' product.slug %}" class="form pull-right">
+  <h1>{{product.title}} <small>${{product.price}}</small></h1>
+  <form class='form' method='POST' action='{% url "add_to_cart" product.slug %}'> {% csrf_token %}
 	<input name="qty" type="number" value='1' class="form-group">
 	<!-- <input name="attr" type="text" placeholder='color' class="form-group"> -->
-	<select class="form-control" name='color'>
-		<option value="Red"> Red</option>
-		<option value="Blue"> Blue</option>
-		<option value="Green"> Green</option>
+	{%if product.variation_set.all%}
+			<select class="form-control" name='size'>
+			{%if product.variation_set.sizes%}
+				{% for item in product.variation_set.sizes %}				
+				<option value="{{ item.title|lower }}"> {{ item.title|capfirst }}</option>		
+				{% endfor %}
+			</select>
+			{% endif %}
+			{%if product.variation_set.colors%}
+				<select class="form-control" name='color'>
+					{% for item in product.variation_set.colors %}
+					<option value="{{ item.title|lower }}"> {{ item.title|capfirst }}</option>		
+					{% endfor %}
+				</select>
+			{% endif %}			
 	</select>
-	<select class="form-control" name='size'>
-		<option value="Small"> Small</option>
-		<option value="Medium"> Medium</option>
-		<option value="Large"> Large</option>
-	</select>
+	{% endif %}
 	<input type="submit" value="Add to Cart" class="btn btn-default">	
 </form>
 </div>
