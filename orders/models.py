@@ -21,3 +21,6 @@ class Order(models.Model):
 	final_total = models.DecimalField(default=10.99, max_digits=1000, decimal_places=2)
 	timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
 	updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
+	def __unicode__(self):
+		return self.order_id

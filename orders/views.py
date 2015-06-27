@@ -5,15 +5,14 @@ from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import render, HttpResponseRedirect
 from .models import Order
+from carts.models import Cart
 
 
 def checkout(request):
 	
 	try:
-		the_id = request.session['cart_id']
-		print "the_id: ", the_id
-		cart = Cart.objects.get(id=the_id)
-		print "Cart is:", cart
+		the_id = request.session['cart_id']		
+		cart = Cart.objects.get(id=the_id)		
 	except:
 		the_id = None
 		return HttpResponseRedirect(reverse("cart"))
@@ -26,11 +25,13 @@ def checkout(request):
 		new_order.save()
 
 	if new_order.status == "Finished":
+		cart.delete()
 		del request.session['cart_id']
+		del request.session['items_total']
+		return HttpResponseRedirect(reverse("cart"))
 
 	context = {}
-	template = "orders/home.html"
+	template = "products/home.html"
 
 	return render(request, template, context)
-		#return HttpResponseRedirect("/cart/")
 		
