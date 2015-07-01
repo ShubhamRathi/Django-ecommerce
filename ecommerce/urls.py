@@ -26,6 +26,7 @@ urlpatterns = [
     url(r'^cart/(?P<slug>[\w-]+)/$', 'carts.views.add_to_cart', name='add_to_cart'),
     url(r'^products/(?P<slug>[\w-]+)/$', 'products.views.single', name='single_product'),
     url(r'^checkout/$', 'orders.views.checkout', name='checkout'),
+    url(r'^orders/$', 'orders.views.orders', name='user_orders'),
     url(r'^products/$', 'products.views.all', name='products'),
     url(r'^admin/', include(admin.site.urls)),
 ] 

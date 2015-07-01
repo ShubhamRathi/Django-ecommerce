@@ -39,7 +39,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'products',
     'carts',
-    'orders'
+    'orders',
+    'accounts',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -112,3 +113,6 @@ STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), "static", "static_root")
 STATICFILES_DIRS = (
     os.path.join(os.path.dirname(BASE_DIR), "static", "static_files"),
 )
+
+STRIPE_SECRET_KEY = "sk_test_MyxAOmHAZkPQ4aZ7hRRybev6"
+STRIPE_PUBLISHABLE_KEY="pk_test_XF9E1tuTYjQXcTdu2tjYF4Kt"

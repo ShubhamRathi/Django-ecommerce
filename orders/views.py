@@ -6,8 +6,14 @@ from django.contrib import messages
 from django.shortcuts import render, HttpResponseRedirect
 from .models import Order
 from carts.models import Cart
+from .utils import id_generator
 
+def orders(request):
+	context = {}
+	template = "orders/user.html"
+	return render(request, template, context)
 
+@login_required
 def checkout(request):
 	
 	try:
@@ -17,12 +23,18 @@ def checkout(request):
 		the_id = None
 		return HttpResponseRedirect(reverse("cart"))
 
-	new_order, created = Order.objects.get_or_create(cart=cart)
-	print created
-
-	if created:
-		new_order.order_id = str(time.time())
+	try:
+		new_order = Order.objects.get(cart=cart)
+	except Order.DoesNotExist:
+		new_order = Order()
+		new_order.cart = cart
+		new_order.user = request.user
+		new_order.order_id = id_generator()
 		new_order.save()
+	except:
+		new_order = None
+		# work on some error message
+		return HttpResponseRedirect(reverse("cart"))
 
 	if new_order.status == "Finished":
 		cart.delete()
