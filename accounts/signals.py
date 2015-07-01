@@ -5,7 +5,6 @@ from .models import UserStripe
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
-
 def get_create_stripe(sender, user, *args, **kwargs):
 	new_user_stripe, created = UserStripe.objects.get_or_create(user=user)
 	print "hello"
@@ -17,4 +16,4 @@ def get_create_stripe(sender, user, *args, **kwargs):
 		new_user_stripe.stripe_id = customer.id
 		new_user_stripe.save()
 
-user_logged_in(get_create_stripe)
+user_logged_in.connect(get_create_stripe)
