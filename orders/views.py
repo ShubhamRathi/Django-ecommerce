@@ -15,7 +15,9 @@ def orders(request):
 
 @login_required
 def checkout(request):
-	
+	# print "Inside checkout:"
+	# print request
+	# print "_________________________________________"
 	try:
 		the_id = request.session['cart_id']		
 		cart = Cart.objects.get(id=the_id)		

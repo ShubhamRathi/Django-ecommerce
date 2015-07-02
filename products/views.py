@@ -4,7 +4,10 @@ from django.conf import settings
 
 
 # Create your views here.
-def home(request): # When I enter a URL, I'm making a request. This request is being handled at home. 
+def home(request): # When I enter a URL, I'm making a request. This request is being handled at home.
+	# print "Inside home():"
+	# print request
+	# print "_________________________________________" 
 	products = Product.objects.all()
 	context = {'products': products}
 	template='products/home.html'
