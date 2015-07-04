@@ -8,6 +8,7 @@ def home(request): # When I enter a URL, I'm making a request. This request is b
 	# print "Inside home():"
 	# print request
 	# print "_________________________________________" 
+	print request.POST
 	products = Product.objects.all()
 	context = {'products': products}
 	template='products/home.html'

@@ -7,7 +7,14 @@ from .models import UserStripe
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
-def get_create_stripe(sender, user, *args, **kwargs): 	
+try:	
+	from django.contrib.auth import get_user_model
+	User = settings.AUTH_USER_MODEL
+	#print "Hello"
+except ImportError:
+	from django.contrib.auth.models import User
+
+def get_create_stripe(user): 	
 	new_user_stripe, created = UserStripe.objects.get_or_create(user=user)
 	if created:
 		customer = stripe.Customer.create(

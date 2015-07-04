@@ -3,6 +3,8 @@ from django.contrib.auth import logout, login, authenticate
 from django.contrib import messages
 from .forms import LoginForm, RegistrationForm
 
+from .models import EmailConfirmed
+
 def logout_view(request):
 	logout(request)
 	return HttpResponseRedirect("/")
@@ -15,6 +17,7 @@ def login_view(request):
 		password = form.cleaned_data['password']
 		user = authenticate(username=username, password=password)
 		login(request, user)
+		user.emailconfirmed.activate_user_email()
 		messages.success(request, "Successfully Logged In. Welcome Back!")
 		return HttpResponseRedirect("/")
 	context = {
