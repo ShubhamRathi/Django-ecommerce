@@ -2,7 +2,7 @@ from django.shortcuts import render, HttpResponseRedirect, Http404
 from django.contrib.auth import logout, login, authenticate
 from django.contrib import messages
 from .forms import LoginForm, RegistrationForm
-
+import re
 from .models import EmailConfirmed
 
 def logout_view(request):
@@ -45,3 +45,31 @@ def registration_view(request):
 		 "submit_btn": btn,
 	}
 	return render(request, "form.html", context)
+
+SHA1_RE = re.compile('^[a-f0-9]{40}$')
+
+def activation_view(request, activation_key):
+	if SHA1_RE.search(activation_key):
+		print "activation key is real"
+		try:
+			instance = EmailConfirmed.objects.get(activation_key=activation_key)
+		except EmailConfirmed.DoesNotExist:
+			instance = None
+			messages.success(request, "There was an error with your request.")
+			return HttpResponseRedirect("/")
+		if instance is not None and not instance.confirmed:
+			page_message = "Confirmation Successful! Welcome."
+			instance.confirmed = True
+			instance.activation_key = "Confirmed"
+			instance.save()
+			messages.success(request, "Successfully Confirmed! Please login.")
+		elif instance is not None and instance.confirmed:
+			page_message = "Already Confirmed"
+			messages.success(request, "Already Confirmed.")
+		else:
+			page_message = ""
+
+		context = {"page_message": page_message}
+		return render(request, "accounts/activation_complete.html", context)
+	else:
+		raise Http404

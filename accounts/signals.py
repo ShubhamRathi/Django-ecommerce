@@ -1,8 +1,11 @@
 import stripe
+import random
+import hashlib
+from .models import UserStripe,EmailConfirmed
 from django.conf import settings
 from django.contrib.auth.signals import user_logged_in
 from django.db.models.signals import post_save
-from .models import UserStripe
+
 
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
