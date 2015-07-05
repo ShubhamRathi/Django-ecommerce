@@ -107,6 +107,11 @@ EMAIL_HOST_PASSWORD = "hellocfe123"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
+if DEBUG:
+    SITE_URL="http://127.0.0.1:8000"
+else:
+    SITE_URL="http://curion.in"
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
