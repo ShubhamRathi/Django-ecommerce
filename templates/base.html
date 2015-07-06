@@ -61,11 +61,7 @@
   </head>
 
   <body>
-     <div class='alert alert-success alert-top-message alert-dismissible' role='alert'>     
-         <div class="container">
-         <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-         <p> Hello </p> </div>
-     </div>
+     
     {% include 'navbar.html' %}
 
     {% block jumbotron %}
@@ -73,11 +69,16 @@
 
       <!-- Main component for a primary marketing message or call to action -->
     <div class="container">
-    <div class='alert alert-success alert-top-message alert-dismissible' role='alert'>     
-         <div class="container">
-         <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-         <p> Hello </p> </div>
-     </div>
+    {% if messages %}
+            {% for message in messages %}
+            <div class='alert {% if "success" in message.tags %}alert-success{% elif "warning" in message.tags%}alert-warning{% elif "error" in message.tags %}alert-danger{% endif %} alert-dismissible' role='alert'>
+            <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+               
+                {% if "safe" in message.tags %}{{ message|safe }}{% else %}{{ message }}{% endif %}
+                
+          </div>
+          {% endfor %}
+      {% endif %}
     {% block content %}
     {% endblock %}
     </div>

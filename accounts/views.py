@@ -8,9 +8,9 @@ from .models import EmailConfirmed
 
 def logout_view(request):
 	logout(request)
-	messages.success(request, "<strong>Successfully Logged out</strong>. Feel free to <a href='%s'>login</a> again." %(reverse("auth_login")), extra_tags='safe, abc')
-	messages.warning(request, "There's a warning.")
-	messages.error(request, "There's an error.")
+	messages.success(request, "<strong>Logged out</strong>. Feel free to <a href='%s'>login</a> again." %(reverse("auth_login")), extra_tags='safe, abc')
+	# messages.warning(request, "There's a warning.")
+	# messages.error(request, "There's an error.")
 	return HttpResponseRedirect('%s'%(reverse("auth_login")))
 
 def login_view(request):
@@ -20,8 +20,7 @@ def login_view(request):
 		username = form.cleaned_data['username']
 		password = form.cleaned_data['password']
 		user = authenticate(username=username, password=password)
-		login(request, user)
-		user.emailconfirmed.activate_user_email()
+		login(request, user)		
 		messages.success(request, "Successfully Logged In. Welcome Back!")
 		return HttpResponseRedirect("/")
 	context = {
@@ -56,7 +55,7 @@ def activation_view(request, activation_key):
 	if SHA1_RE.search(activation_key):
 		print "activation key is real"
 		try:
-			instance = EmailConfirmed.objects.get(activation_key=activation_key)
+			instance = EmailConfirmed.objects.get(activation_key=activation_key)			
 		except EmailConfirmed.DoesNotExist:
 			instance = None
 			messages.success(request, "There was an error with your request.")

@@ -29,8 +29,7 @@ class EmailConfirmed(models.Model):
 			"user": self.user.username,
 		}
 		message = render_to_string("accounts/activation_message.txt", context)
-		subject = "Activate your Email"
-		#print message
+		subject = "Activate your Email"		
 		self.email_user(subject, message, settings.DEFAULT_FROM_EMAIL)
 
 	def email_user(self, subject, message, from_email=None, **kwargs):

@@ -41,5 +41,4 @@ def user_created(sender, instance, created, *args, **kwargs):
 			email_confirmed.save()
 			email_confirmed.activate_user_email()
 
-#user_logged_in.connect(get_create_stripe)
 post_save.connect(user_created, sender=settings.AUTH_USER_MODEL)

@@ -1,7 +1,7 @@
 from django.shortcuts import render, Http404
 from .models import Product, ProductImage
 from django.conf import settings
-
+from marketing.models import MarketingMessage
 
 # Create your views here.
 def home(request): # When I enter a URL, I'm making a request. This request is being handled at home.
