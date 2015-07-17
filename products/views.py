@@ -10,7 +10,8 @@ def home(request): # When I enter a URL, I'm making a request. This request is b
 	# print "_________________________________________" 
 	print request.POST
 	products = Product.objects.all()
-	context = {'products': products}
+	marketing_message=MarketingMessage.objects.all()[0]
+	context = {'products': products, 'marketing_message': marketing_message}
 	template='products/home.html'
 	return render(request, template, context)
 
