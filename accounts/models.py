@@ -3,7 +3,7 @@ from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.template.loader import render_to_string
-
+from .tasks import email_user
 
 class UserStripe(models.Model):
 	user = models.OneToOneField(settings.AUTH_USER_MODEL)
@@ -30,8 +30,8 @@ class EmailConfirmed(models.Model):
 		}
 		message = render_to_string("accounts/activation_message.txt", context)
 		subject = "Activate your Email"		
-		self.email_user(subject, message, settings.DEFAULT_FROM_EMAIL)
-
-	def email_user(self, subject, message, from_email=None, **kwargs):
-		send_mail(subject, message, from_email, [self.user.email], kwargs)
+		email_user(subject, message, settings.DEFAULT_FROM_EMAIL).delay()
+		
+	# def email_user(self, subject, message, from_email=None, **kwargs):
+	# 	send_mail(subject, message, from_email, [self.user.email], kwargs)
 

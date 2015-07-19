@@ -42,6 +42,7 @@ INSTALLED_APPS = (
     'carts',
     'orders',
     'marketing',
+    'djcelery',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -129,3 +130,13 @@ STATICFILES_DIRS = (
 
 STRIPE_SECRET_KEY = "sk_test_MyxAOmHAZkPQ4aZ7hRRybev6"
 STRIPE_PUBLISHABLE_KEY="pk_test_XF9E1tuTYjQXcTdu2tjYF4Kt"
+
+#Celery
+
+INSTALLED_APPS += (
+    'djcelery',
+)
+
+BROKER_URL = 'redis://127.0.0.1:6379/0'
+BROKER_TRANSPORT = 'redis'
+CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
