@@ -30,8 +30,8 @@ class EmailConfirmed(models.Model):
 		}
 		message = render_to_string("accounts/activation_message.txt", context)
 		subject = "Activate your Email"		
-		email_user(subject, message, settings.DEFAULT_FROM_EMAIL).delay()
-		
+		email_user.delay(subject, message, settings.DEFAULT_FROM_EMAIL)
+
 	# def email_user(self, subject, message, from_email=None, **kwargs):
 	# 	send_mail(subject, message, from_email, [self.user.email], kwargs)
 
