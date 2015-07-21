@@ -1,5 +1,3 @@
-from future import absolute_import
-
 import os
 import django
 
